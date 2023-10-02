@@ -1,6 +1,12 @@
 
 mkdir ./outputs 2>/dev/null
 
-export PYTHONBREAKPOINT="pudb.set_trace"
+# export PYTHONBREAKPOINT="pudb.set_trace"
 
-python -u test/CaETest.py
+export PYTHONBREAKPOINT="0"
+dataset=handwritten
+
+# python -u test/CaETest.py
+# python -m pudb train.py --dataset ${dataset}
+python train.py --dataset ${dataset}
+

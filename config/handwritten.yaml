@@ -2,6 +2,7 @@ Global:
   output: ./outputs
   num_iter: 1000
   device: [0]
+  epochs: 100
 
 Arch:
   input_dims: [240, 76, 216, 47, 64, 6]
@@ -19,3 +20,12 @@ Data:
 
   DataLoader:
     batch_size: 1000
+
+Loss:
+  CELoss:
+    weight: 1.
+
+Metric:
+  Accuracy:
+    weight: 1
+  
