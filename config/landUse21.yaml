@@ -1,7 +1,7 @@
 Global:
-  output: ./outputs/scene15
+  output: ./outputs/landUse21
   num_iter: 1000
-  device: [1]
+  device: [0]
   epochs: 100
   dim: &dim 128
 
@@ -9,14 +9,14 @@ Arch:
   input_dims: [20, 59, 40]
   hidden_dims: [300, 300, 300]
   output_dims: [*dim, *dim, *dim]
-  num_class: 15
-  fusion_method: caf
+  num_class: 21
+  fusion_method: equal
   tau: 1
 
 Data:
   Dataset:
     name: Scene15
-    data_root: ./data/paperdata/Scene-15.mat
+    data_root: ./data/paperdata/LandUse-21.mat
     test_size: 0.2
     random_state: 1
 

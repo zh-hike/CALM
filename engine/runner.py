@@ -45,15 +45,15 @@ class Runner(BaseRunner):
                                                 batch_size=self.data_cfg['DataLoader']['batch_size'])
         
     def train_an_batch(self):
-        zs, qs, qf, cae_loss, self.u_f = self.net(self.inputs, self.target)
-        self.loss = self.loss_func(zs=zs, 
-                                   qs=qs, 
-                                   qf=qf, 
+        self.zs, self.qs, self.qf, cae_loss, self.u_f, self.u_v = self.net(self.inputs, self.target)
+        self.loss = self.loss_func(zs=self.zs, 
+                                   qs=self.qs, 
+                                   qf=self.qf, 
                                    label=self.target)
         self.loss.update({"CaELoss": cae_loss})
         self.loss['loss'] += cae_loss
-        self.metric = self.metric_func(qs=qs,
-                                       qf=qf,
+        self.metric = self.metric_func(qs=self.qs,
+                                       qf=self.qf,
                                        label=self.target)
         self.opt.zero_grad()
         self.loss['loss'].backward()
@@ -61,14 +61,14 @@ class Runner(BaseRunner):
 
     @torch.no_grad()
     def val_an_batch(self):
-        zs, qs, qf, cae_loss, self.u_f = self.net(self.inputs)
-        self.loss = self.loss_func(zs=zs, 
-                                   qs=qs, 
-                                   qf=qf, 
+        self.zs, self.qs, self.qf, cae_loss, self.u_f, self.u_v = self.net(self.inputs)
+        self.loss = self.loss_func(zs=self.zs, 
+                                   qs=self.qs, 
+                                   qf=self.qf, 
                                    label=self.target)
         self.loss.update({"CaELoss": cae_loss})
         self.loss['loss'] += cae_loss
         
-        self.metric = self.metric_func(qs=qs,
-                                       qf=qf,
+        self.metric = self.metric_func(qs=self.qs,
+                                       qf=self.qf,
                                        label=self.target)

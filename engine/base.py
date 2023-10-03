@@ -100,13 +100,15 @@ class BaseRunner(ABC):
         self.auc_avg = AverageMeter()
         self.loss_avg = AverageMeter()
         self.best_acc = 0
+        self.best_weight = None
 
 
     def on_train_end(self):
         weight_path = os.path.join(self.output, "weight")
-        os.makedirs(weight_path)
+        os.makedirs(weight_path, exist_ok=True)
         self.net.cpu()
-        torch.save(self.net.state_dict(), os.path.join(weight_path, "net.pt"))
+        torch.save(self.net.state_dict(), os.path.join(weight_path, "last.pt"))
+        torch.save(self.best_weight, os.path.join(weight_path, "best_net.pt"))
 
     def on_validate_start(self):
         self.net.eval()
@@ -140,7 +142,10 @@ class BaseRunner(ABC):
         print(f"Epoch: {self.epoch_id}/{self.epochs}  train_loss: {self.loss_avg.avg()}  train_acc: {self.acc_avg.avg()}  train_cae: {round(self.u_f.mean().item(), 4)}", end="  ")
 
     def on_val_epoch_end(self):
-        self.best_acc = max(self.acc_avg.avg())
+        if self.best_acc <= self.acc_avg.avg():
+            self.best_acc = self.acc_avg.avg()
+            self.best_weight = self.net.state_dict()
+
         print(f"val_loss: {self.loss_avg.avg()}  val_acc: {self.acc_avg.avg()}  val_cae: {round(self.u_f.mean().item(), 4)}  best_acc: {self.best_acc}")
         
 

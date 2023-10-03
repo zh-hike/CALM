@@ -3,11 +3,12 @@ Global:
   num_iter: 1000
   device: [0]
   epochs: 100
+  dim: &dim 128
 
 Arch:
   input_dims: [240, 76, 216, 47, 64, 6]
   hidden_dims: [300, 300, 300, 300, 300, 300]
-  output_dims: [128, 128, 128, 128, 128]
+  output_dims: [*dim, *dim, *dim, *dim, *dim]
   num_class: 10
   fusion_method: caf
   tau: 1

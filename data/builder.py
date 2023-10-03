@@ -2,6 +2,7 @@ from torch.utils.data import DataLoader
 
 from .dataset import HandWritten
 from .dataset import Scene15
+from .dataset import LandUse21
 
 def build(name, 
           data_root, 

@@ -50,17 +50,16 @@ class CALM(nn.Module):
             breakpoint()
             label = self.recompute_label(qs)
 
-        u_v = self.cae.pdf([q.detach() for q in qs], label)
+        u_v = self.cae.pdf([q.detach() for q in qs], label)  # (v, n)
         q_f = self.fusion(qs, u_v)         # 融合后的概率
         u_f = self.cae.pdf([q_f], label)
         
-        return zs, qs, q_f, cae_loss, u_f
+        return zs, qs, q_f, cae_loss, u_f, u_v
     
     def fusion(self, qs, u_v=None):
         if self.fusion_method == "equal":
-            return sum(qs) / len(qs), None
+            return sum(qs) / len(qs)
         elif self.fusion_method == "caf":
-            breakpoint()
             qs = torch.stack(qs)
             uuv = F.softmax(u_v / self.tau, dim=0).unsqueeze(-1)
             qf = (uuv * qs).sum(dim=0)

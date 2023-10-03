@@ -6,15 +6,13 @@ def parse_cfg():
     parser = ArgumentParser("calm")
     parser.add_argument("--dataset", 
                         type=str, 
-                        choices=["handwritten", "scene15"],
+                        choices=["handwritten", "scene15", "landUse21"],
                         help="config file",
                         default="handwritten")
 
     config = parser.parse_args()
     cfg = cfg_build(config.dataset)
     return cfg, config
-
-
 
 def train(cfg, config=None):
     runner = Runner(arch_cfg=cfg['Arch'],
