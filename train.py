@@ -6,7 +6,7 @@ def parse_cfg():
     parser = ArgumentParser("calm")
     parser.add_argument("--dataset", 
                         type=str, 
-                        choices=["handwritten"],
+                        choices=["handwritten", "scene15"],
                         help="config file",
                         default="handwritten")
 

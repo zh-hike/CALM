@@ -1,21 +1,21 @@
 Global:
-  output: ./outputs/handwritten
+  output: ./outputs/scene15
   num_iter: 1000
   device: [0]
   epochs: 100
 
 Arch:
-  input_dims: [240, 76, 216, 47, 64, 6]
-  hidden_dims: [300, 300, 300, 300, 300, 300]
-  output_dims: [128, 128, 128, 128, 128]
-  num_class: 10
+  input_dims: [20, 59, 40]
+  hidden_dims: [300, 300, 300]
+  output_dims: [128, 128, 128]
+  num_class: 15
   fusion_method: caf
   tau: 1
 
 Data:
   Dataset:
-    name: HandWritten
-    data_root: ./data/paperdata/handwritten.mat
+    name: Scene15
+    data_root: ./data/paperdata/Scene-15.mat
     test_size: 0.2
     random_state: 1
 

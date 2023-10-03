@@ -17,10 +17,12 @@ class Runner(BaseRunner):
         
         self.arch_cfg = arch_cfg
         self.data_cfg = data_cfg
+        self.global_cfg = global_cfg
         self.loss_cfg = loss_cfg
         self.metric_cfg = metric_cfg
         super(Runner, self).__init__(global_cfg['device'], 
-                                     global_cfg['epochs'])
+                                     global_cfg['epochs'],
+                                     global_cfg["output"])
         
 
     def init_net(self):
@@ -43,11 +45,13 @@ class Runner(BaseRunner):
                                                 batch_size=self.data_cfg['DataLoader']['batch_size'])
         
     def train_an_batch(self):
-        zs, qs, qf = self.net(self.inputs)
+        zs, qs, qf, cae_loss, self.u_f = self.net(self.inputs, self.target)
         self.loss = self.loss_func(zs=zs, 
                                    qs=qs, 
                                    qf=qf, 
                                    label=self.target)
+        self.loss.update({"CaELoss": cae_loss})
+        self.loss['loss'] += cae_loss
         self.metric = self.metric_func(qs=qs,
                                        qf=qf,
                                        label=self.target)
@@ -57,11 +61,13 @@ class Runner(BaseRunner):
 
     @torch.no_grad()
     def val_an_batch(self):
-        zs, qs, qf = self.net(self.inputs)
+        zs, qs, qf, cae_loss, self.u_f = self.net(self.inputs)
         self.loss = self.loss_func(zs=zs, 
                                    qs=qs, 
                                    qf=qf, 
                                    label=self.target)
+        self.loss.update({"CaELoss": cae_loss})
+        self.loss['loss'] += cae_loss
         
         self.metric = self.metric_func(qs=qs,
                                        qf=qf,

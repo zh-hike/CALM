@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from .base import BaseDataset
 
 
-class HandWritten(BaseDataset):
+class Scene15(BaseDataset):
     def __init__(self, 
                  data_root, 
                  test_size=0.2, 
@@ -14,6 +14,7 @@ class HandWritten(BaseDataset):
         xs = data["X"][0]
         labels = data["Y"].squeeze().astype("int64")
         labels = labels - labels.min()
+
         xs = self.preprocess(xs)
         self.xs, self.labels = self.split_train_test(xs,
                                                      labels,

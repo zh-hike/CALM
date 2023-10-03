@@ -1,13 +1,17 @@
 from abc import ABC, abstractmethod
-
+import os
 import torch
 import logging
 from utils import AverageMeter
 
 class BaseRunner(ABC):
-    def __init__(self, devices, epochs):
+    def __init__(self, 
+                 devices, 
+                 epochs,
+                 output="./output"):
         self.epochs = epochs
-
+        self.output = output
+        os.makedirs(output, exist_ok=True)
         self.init_device(devices)
         self.init_net()
         self.init_optimizer()
@@ -95,10 +99,14 @@ class BaseRunner(ABC):
         self.acc_avg = AverageMeter()
         self.auc_avg = AverageMeter()
         self.loss_avg = AverageMeter()
+        self.best_acc = 0
 
 
     def on_train_end(self):
-        pass
+        weight_path = os.path.join(self.output, "weight")
+        os.makedirs(weight_path)
+        self.net.cpu()
+        torch.save(self.net.state_dict(), os.path.join(weight_path, "net.pt"))
 
     def on_validate_start(self):
         self.net.eval()
@@ -129,10 +137,12 @@ class BaseRunner(ABC):
         self.loss_avg.reset()
 
     def on_train_epoch_end(self):
-        print(f"Epoch: {self.epoch_id}/{self.epochs}  train_acc: {self.acc_avg.avg()}  ", end="")
+        print(f"Epoch: {self.epoch_id}/{self.epochs}  train_loss: {self.loss_avg.avg()}  train_acc: {self.acc_avg.avg()}  train_cae: {round(self.u_f.mean().item(), 4)}", end="  ")
 
     def on_val_epoch_end(self):
-        print(f"val_acc: {self.acc_avg.avg()}")
+        self.best_acc = max(self.acc_avg.avg())
+        print(f"val_loss: {self.loss_avg.avg()}  val_acc: {self.acc_avg.avg()}  val_cae: {round(self.u_f.mean().item(), 4)}  best_acc: {self.best_acc}")
+        
 
     def on_train_batch_start(self):
         pass

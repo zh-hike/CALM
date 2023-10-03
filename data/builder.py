@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader
 
 from .dataset import HandWritten
-
+from .dataset import Scene15
 
 def build(name, 
           data_root, 

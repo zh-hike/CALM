@@ -1,6 +1,7 @@
 import yaml
 
-config_file = {"handwritten": "./config/handwritten.yaml"}
+config_file = {"handwritten": "./config/handwritten.yaml",
+               "scene15": "./config/scene15.yaml"}
 
 def build(dataset):
     file = config_file[dataset]

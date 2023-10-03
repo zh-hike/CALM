@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from scipy.stats import multivariate_normal
-
+import numpy as np
 Eps = 1e-4
 
 
@@ -37,6 +37,8 @@ class SingleClassCaE(nn.Module):
         score = multivariate_normal.pdf(x, _mu, _sigma) / multivariate_normal.pdf(
             _mu, _mu, _sigma
         )
+        if isinstance(score, (int, float)):
+            score = np.array([score])
         return torch.from_numpy(score).to(x.device)
 
 
@@ -62,6 +64,7 @@ class MultiClassCaE(nn.Module):
             net._reset()
 
     def pdf(self, preds, label):
+        device = label.device
         label = label.cpu()
         preds = torch.stack(preds)
         preds = preds.detach().cpu()
@@ -70,4 +73,5 @@ class MultiClassCaE(nn.Module):
             u = self.cae[label[i]].pdf(preds[:, i, ...])
             scores.append(u.reshape(-1, 1))
         scores = torch.concat(scores, dim=-1)
+        scores = scores.to(device)
         return scores
